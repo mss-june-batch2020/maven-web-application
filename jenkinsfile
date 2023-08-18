@@ -1,0 +1,31 @@
+node{
+    echo "the jenkins home dir is :${env.JENKINS_HOME}"
+echo "job name is :${env.JOB_NAME}"
+echo "build number is :${env.BUILD_NUMBER}"
+
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
+
+    
+   def mavenHome = tool name: 'maven 3.9.3'
+/* 
+stage('checkoutcode'){
+git branch: 'development', credentialsId: '9c0bdb68-1d87-46c6-80d9-2296dd70d489', url: 'https://github.com/mss-june-batch2020/maven-web-application.git'
+}
+
+stage('build'){
+sh "${mavenHome}/bin/mvn clean package"
+}
+stage('ExecuteSonarQubeReport'){
+sh "${mavenHome}/bin/mvn clean sonar:sonar"
+}
+*/
+stage('uploadArtifactsIntoNexus'){
+sh "${mavenHome}/bin/mvn clean deploy"
+}
+stage('deployappintoTomcatserver'){
+sshagent(['1ff35d43-3746-4fdc-bdb4-c931e52d84e1']) {
+    sh "scp -o  StrictHostKeyChecking=no target/maven-web-application.war ec2-user@172.31.7.27:/opt/apache-tomcat-9.0.78/webapps/"
+}
+}
+
+}
