@@ -5,8 +5,7 @@ echo "build number is :${env.BUILD_NUMBER}"
 
 properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'RebuildSettings', autoRebuild: false, rebuildDisabled: false], [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
 
-    
-   def mavenHome = tool name: 'maven 3.9.3'
+def mavenHome = tool name: 'maven 3.9.3'
 /* 
 stage('checkoutcode'){
 git branch: 'development', credentialsId: '9c0bdb68-1d87-46c6-80d9-2296dd70d489', url: 'https://github.com/mss-june-batch2020/maven-web-application.git'
