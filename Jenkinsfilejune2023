@@ -11,7 +11,7 @@ stage('checkoutcode'){
 git branch: 'development', credentialsId: '9c0bdb68-1d87-46c6-80d9-2296dd70d489', url: 'https://github.com/mss-june-batch2020/maven-web-application.git'
 }
 
-stage('build'){
+stage('Build'){
 sh "${mavenHome}/bin/mvn clean package"
 }
 stage('ExecuteSonarQubeReport'){
