@@ -1,0 +1,23 @@
+node{
+echo "jenkins home directorry is :${env.JENKINS_HOME}"
+def mavenHome=tool name:'maven3.9.3'
+stage('checkoutcode'){
+git branch: 'development', credentialsId: '609dce9a-c8c3-4652-ad46-30e480226f32', url: 'https://github.com/mss-june-   batch2020/maven-web-application.git'
+}
+stage('build'){
+sh "${mavenHome}/bin/mvn clean package"
+}
+stage('ExecuteSonarqubeReport'){
+sh "${mavenHome}/bin/mvn clean sonar:sonar"
+}
+stage('upload artifact into nexus'){
+sh "${mavenHome}/bin/ mvn clean deploy"
+}
+stage('deploy app into tocat server'){
+sshagent(['6c66efdf-8d10-4a10-ad4c-dcb38b66df13']) {
+sh "scp -o strictHostkeychecking=no target/maven-web-application.war 
+ec2-user@172.31.7.27:/opt/apache-tomcat-9.0.78/webapps/"
+}
+
+}
+}
